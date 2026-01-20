@@ -1,17 +1,26 @@
-FROM eclipse-termurin:25-jdk AS builder
+# ---------- Build stage ----------
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-COPY . .
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+RUN ./mvnw dependency:go-offline
 
-RUN ./mvnw clean package -DskpiTests
+COPY src src
+RUN ./mvnw clean package -DskipTests
 
-FROM eclipse-termurin:25-jre
+# ---------- Runtime stage ----------
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
+ENV PORT=8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

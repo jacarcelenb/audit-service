@@ -1,4 +1,4 @@
-FROM eclipse-termurin:21-jdk AS builder
+FROM eclipse-termurin:21.0.5-jdk AS builder
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN ./mvnw clean package -DskpiTests
 
-FROM eclipse-termurin:21-jre
+FROM eclipse-termurin:21.0.5-jre
 
 WORKDIR /app
 
